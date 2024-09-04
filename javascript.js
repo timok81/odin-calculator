@@ -5,7 +5,8 @@ let currentOperator = "";
 let result = "";
 const snarkMsg = "Nice try!"
 
-const display = document.querySelector("#display");
+const displayLower = document.querySelector("#displayLower");
+const displayUpper = document.querySelector("#displayUpper");
 const numberButtons = document.querySelectorAll(".numberButton")
 const operatorButtons = document.querySelectorAll(".operatorButton");
 const equalsButton = document.querySelector("#equals");
@@ -20,7 +21,6 @@ numberButtons.forEach((button) => {
     });
 });
 
-//keyboard support
 document.addEventListener("keydown", (e) => {
     if (e.key === "1" || e.key === "2" || e.key === "3" || e.key === "4" || e.key === "5" || e.key === "6" ||
         e.key === "7" || e.key === "6" || e.key === "8" || e.key === "9" || e.key === "0") { inputNumber(`${e.key}`) }
@@ -46,22 +46,24 @@ delButton.addEventListener("click", deleteInput);
 //---------------------------------------------------------------------------------//
 
 function deleteInput() {
-    if (display.textContent != "") {
-        const newDisplayString = display.textContent.slice(0, (display.textContent.length - 1));
-        clearDisplay();
-        displayInput(newDisplayString);
+    if (displayLower.textContent != "") {
+        const newDisplayString = displayLower.textContent.slice(0, (displayLower.textContent.length - 1));
+        clearLowerDisplay();
+        displayInputLower(newDisplayString);
     }
 }
 
 function addDecimal() {
-    if (!display.textContent.includes(".")) {
-        displayInput(".");
+    if (!displayLower.textContent.includes(".")) {
+        displayInputLower(".");
     }
 }
 
 function invertNumber() {
-    if (currentOperand === 1) { display.textContent *= -1; }
-    else { display.textContent *= -1; }
+    if (currentOperand === 1) { displayLower.textContent *= -1; }
+    else {
+        displayLower.textContent *= -1;
+    }
 }
 
 function resetAll() {
@@ -69,31 +71,42 @@ function resetAll() {
     currentNum2 = "";
     currentOperator = "";
     result = "";
-    display.textContent = "0";
+    displayLower.textContent = "0";
+    displayUpper.textContent = "0";
     currentOperand = 1;
 }
 
-function displayInput(input) { display.textContent += input; }
+function displayInputLower(input) { displayLower.textContent += input; }
+function displayInputUpper(input) {
+    let inputString = input.toString();
+    if (inputString.length > 1 && inputString.charAt(0) === "-") {
+        inputString = "(" + inputString + ")";
+        input = inputString;
+    }
+    displayUpper.textContent += input;
+}
 
-function clearDisplay() { display.textContent = ""; }
+function clearLowerDisplay() { displayLower.textContent = ""; }
+function clearUpperDisplay() { displayUpper.textContent = ""; }
 
 function inputNumber(num) {
-    if (display.textContent === "0") {
-        clearDisplay();
+    if (displayLower.textContent === "0" || displayLower.textContent === snarkMsg) {
+        clearLowerDisplay();
     };
     if (currentOperand === 1) {
-        if (display.textContent.length < 10) {
-            displayInput(num);
+        if (displayLower.textContent.length < 10) {
+            displayInputLower(num);
         };
     }
     else {
-        if (display.textContent.length < 12) {
+        if (displayLower.textContent.length < 12) {
             if (currentOperator !== "" && currentNum2 === "") {
-                clearDisplay();
+                clearLowerDisplay();
+                displayInputUpper(currentOperator);
             }
-            displayInput(num);
+            displayInputLower(num);
             if (currentNum2 === "") {
-                currentNum2 = display.textContent;
+                currentNum2 = displayLower.textContent;
             }
         }
     }
@@ -101,11 +114,13 @@ function inputNumber(num) {
 
 function inputOperator(operator) {
     if (currentOperator === "") {
-        currentNum1 = display.textContent;
+        currentNum1 = displayLower.textContent;
         currentOperand *= -1;
-        clearDisplay();
+        clearLowerDisplay();
+        clearUpperDisplay();
+        displayInputUpper(currentNum1);
         currentOperator = operator;
-        displayInput(operator);
+        displayInputLower(operator);
     }
     else if (currentNum1 != "" && currentNum2 != "" && currentOperator != "") {
         startOperation();
@@ -115,11 +130,12 @@ function inputOperator(operator) {
 
 function startOperation() {
     if (currentOperator != "" && currentNum1 != "") {
-        currentNum2 = display.textContent;
+        currentNum2 = displayLower.textContent;
     }
 
     if (currentNum1 != "" && currentNum2 != "" && currentOperator != "") {
-        clearDisplay();
+        clearLowerDisplay();
+        displayInputUpper(currentNum2);
         operate(Number(currentNum1), currentOperator, Number(currentNum2));
     }
     currentOperand *= -1;
@@ -145,12 +161,13 @@ function operate(num1, operator, num2) {
         let shortResult = resultString.slice(0, 12);
         result = Number(shortResult)
     }
-    
-    displayInput(result);
+
+    displayInputLower(result);
     currentNum1 = result;
     currentNum2 = "";
     currentOperator = "";
-    result = "";    
+    if (result === Infinity) { displayLower.textContent = snarkMsg };
+    result = "";
 }
 
 function add(num1, num2) { return num1 + num2; }

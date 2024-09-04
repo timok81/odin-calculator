@@ -24,19 +24,41 @@ body {
     box-sizing: border-box;
     display: flex;
     width: 350px;
-    height: 75px;
+    height: 120px;
     flex: 0 0 auto;
+    flex-direction: column;
     background-color: rgb(39, 51, 88);
     align-self: center;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin: 16px;
-    padding-right: 8px;
+    justify-content: center;
+    align-items: center;
+    margin: 24px;
     border-radius: 8px;
-    border: 4px solid rgb(91, 109, 165);
+    border: 2px solid rgb(91, 109, 165);
     color:rgb(255, 255, 255);
     font-size: 48px;
-    
+}
+
+#displayLower {
+    display: flex;
+    flex: 0 1 auto;
+    align-self: center;
+    justify-content: flex-end;
+    align-items: center;
+    width: 95%;
+    height: 70px;
+}
+
+#displayUpper {
+    display: flex;
+    flex: 0 1 auto;
+    align-self: center;
+    justify-content: flex-end;
+    align-items: center;
+    width: 95%;
+    height: 50px;
+    font-size: 32px;
+    color:rgb(117, 134, 175);
+    border-bottom: 1px dashed rgb(133, 149, 192);
 }
 
 .buttons {
